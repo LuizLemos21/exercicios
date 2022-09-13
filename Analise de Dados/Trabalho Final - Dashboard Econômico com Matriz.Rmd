@@ -1,0 +1,297 @@
+---
+title: "Dashboard de Ações"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: scroll
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+r = getOption("repos")
+r["CRAN"] = "http://cran.us.r-project.org"
+options(repos = r)
+install.packages("highcharter")
+install.packages("timetk")
+
+
+library(flexdashboard)
+library(shiny)
+
+library(highcharter)
+library(tidyquant)
+library(timetk)
+library(scales)
+library(corrplot)
+
+library(tidyverse)
+library(shiny)
+library(plotly)
+library(dplyr)
+
+
+```
+
+
+Sidebar {.sidebar}
+=====================================
+
+
+```{r}
+
+# Construção dos inputs da barra lateral do dashboard
+ 
+fluidRow(
+column(6,
+textInput("stock1", "Ação 1", ".SA"))
+)
+ 
+ 
+fluidRow(
+column(6,
+textInput("stock2", "Ação 2", ".SA"))
+)
+ 
+fluidRow(
+column(6,
+textInput("stock3", "Ação 3", ".SA"))
+)
+ 
+fluidRow(
+column(6,
+textInput("stock4", "Ação 4", ".SA"))
+)
+
+fluidRow(
+column(6,
+textInput("stock5", "Ação 5", ".SA"))
+)
+ 
+fluidRow(
+column(7,
+dateInput("data", "Data de Início", "2013-01-01", format = "dd-mm-yyyy"))
+)
+ 
+fluidRow(
+column(6,
+numericInput("window", "Intervalo (anos)", 6, min = 3, max = 20, step = 1))
+)
+ 
+actionButton("go", "Enviar")
+
+```
+
+
+
+```{r}
+
+## Coleta, tratamento e calculos
+
+# Coleta os preços das ações através do site/API do Yahoo Finanças
+
+precos <- eventReactive(input$go, {
+ 
+symbols <- c(input$stock1, input$stock2, input$stock3, input$stock4, input $stock5)
+ 
+getSymbols(symbols, src = 'yahoo', from = input$data,
+auto.assign = TRUE, warnings = FALSE) %>%
+map(~Ad(get(.))) %>%
+reduce(merge) %>%
+`colnames<-`(symbols)
+
+
+
+})
+
+
+
+# Converte os preços XTS (Xaviera Techno Solutions (XTS-USD)) em mensal
+
+precos_mensal <- eventReactive(input$go, {
+ 
+precos <- precos()
+ 
+to.monthly(precos(),
+indexAt = "last",
+OHLC = FALSE)
+})
+
+
+
+
+# Calcula os retornos mensais em formatos XTS e Wide
+ 
+retorno_ativo_xts <- eventReactive(input$go, {
+ 
+retorno_ativo_xts <- na.omit(Return.calculate(precos_mensal(),
+method = "log"))
+})
+
+
+# Transforma os preços em tibble, mensal e long
+ 
+precos_mensal_tbl_long <- eventReactive(input$go, {
+precos <- precos()
+ 
+retorno_ativo_long_tbl<- precos %>%
+to.monthly(indexAt = "last",
+OHLC = FALSE) %>%
+tk_tbl(preserve_index = TRUE,
+rename_index = "data") %>%
+gather(ativo,
+precos,
+-data)
+})
+
+
+# Calcula os retornos mensais em tibble e long
+ 
+retorno_ativo_long_tbl <- eventReactive(input$go, {
+ 
+precos_mensal_tbl_long <- precos_mensal_tbl_long()
+ 
+precos_mensal_tbl_long %>%
+group_by(ativo) %>%
+mutate(retorno =
+(log(precos) - log(lag(precos)))
+) %>%
+na.omit()
+})
+
+
+# Calcula os retornos acumulados
+ 
+retorno_ativo_acum_tbl <- eventReactive(input$go, {
+retorno_ativo_long_tbl <- retorno_ativo_long_tbl()
+ 
+retorno_ativo_acum_tbl <- retorno_ativo_long_tbl %>%
+group_by(ativo) %>%
+mutate(retorno_acum = cumsum(retorno))
+})
+
+
+# Calcula o desvio padrão móvel das ações (volatilidade)
+ 
+desvio_padrao_mov_tbl <- eventReactive(input$go, {
+desvio_padrao_mov_tbl <-
+rollapply(retorno_ativo_xts(),
+FUN = sd,
+width = input$window) %>%
+na.omit() %>%
+tk_tbl(preserve_index = TRUE,
+rename_index = "data") %>%
+gather(ativo,
+sd,
+-data)
+})
+
+
+mcorr = eventReactive(input$go, {
+  mcorr = cor(precos()) 
+})
+
+
+```
+
+
+Painel de Acompanhamento
+=====================================
+
+Row {data-height=600, .tabset}
+-----------------------------------------------------------------------
+
+### Preços
+
+```{r}
+
+renderHighchart({
+ 
+hchart(precos_mensal_tbl_long(), type = "line",
+hcaes(x = data,
+y = precos,
+group = ativo)) %>%
+hc_yAxis(opposite = FALSE) %>%
+hc_tooltip(pointFormat = '{point.x: %d-%m-%Y}
+R${point.y:.4f}')
+ 
+})
+
+```
+
+
+### Retornos mensais
+
+```{r}
+
+renderHighchart({
+ 
+hchart(retorno_ativo_long_tbl(), type = "column",
+hcaes(x = data,
+y = retorno * 100,
+group = ativo)) %>%
+hc_yAxis(opposite = FALSE,
+labels = list(format = "{value}%")) %>%
+hc_tooltip(pointFormat = '{point.x: %d-%m-%Y}
+{point.y:.4f}% ')
+ 
+})
+
+```
+
+
+### Retornos Acumulados
+
+```{r}
+
+renderHighchart({
+ 
+hchart(retorno_ativo_acum_tbl(), type = "line",
+hcaes(x = data,
+y = retorno_acum * 100,
+group = ativo)) %>%
+hc_yAxis(opposite = FALSE,
+labels = list(format = "{value}%")) %>%
+hc_tooltip(pointFormat = '{point.x: %d-%m-%Y}
+{point.y:.4f}% ')
+ 
+})
+
+```
+
+### Matriz de Correlações
+
+
+```{r}
+
+
+renderPlot({
+ corrplot( mcorr(),method ="number")
+  })
+
+
+```
+
+
+Row {.tabset .tabset-fade}
+-------------------------------------
+
+### Desvio Padrão Móvel
+
+```{r}
+
+renderHighchart({
+ 
+hchart(desvio_padrao_mov_tbl(), type = "line",
+hcaes(x = data,
+y = sd * 100,
+group = ativo)) %>%
+hc_yAxis(opposite = FALSE,
+labels = list(format = "{value}%")) %>%
+hc_tooltip(pointFormat = '{point.x: %d-%m-%Y}
+{point.y:.4f}% ')
+ 
+})
+
+```
+
+

@@ -1,0 +1,53 @@
+---
+title: "Diamonds"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r pacotes, include=FALSE}
+library(flexdashboard)
+library(plotly)
+library(tidyverse)
+library(shiny)
+library(sidrar)
+```
+
+```{r dados}
+
+
+
+```
+
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Bar + Facet wrap - corte x claridade x cor
+
+```{r}
+
+
+ggplot(data = diamonds) +
+  geom_bar(mapping = aes(x= cut, fill = clarity)) + 
+  facet_wrap(~color)
+```
+
+
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Histogram - preco x cor
+```{r}
+ggplot(diamonds, aes(price, fill = color)) +
+  geom_histogram(binwidth = 500)
+```
+
+### Point - quilates x preço x claridade
+
+```{r}
+ ggplot(data = diamonds) + geom_point(mapping = aes(x=carat, y = price, color= clarity))
+```
+

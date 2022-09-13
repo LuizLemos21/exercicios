@@ -1,0 +1,66 @@
+---
+title: "Dashboard Dinamico"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(dplyr)
+library(tidyverse)
+library(shiny)
+dados = diamonds
+```
+## Column{.sidebar}
+
+```{r}
+selectInput(
+  inputId = "coluna",
+  label = "Escolha a coluna desejada",
+  choices = c("Fair","Good","Very Good","Premium","Ideal")
+)
+
+```
+
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### Point
+
+```{r}
+renderPlot(
+
+  ggplot(data = filter(dados,cut == input$coluna)) +
+    geom_point(mapping = aes(x=carat, y=price, color=color))
+)
+
+```
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### Bar
+```{r}
+renderPlot(
+ ggplot(data = filter(dados,cut == input$coluna)) +
+  geom_bar(mapping = aes(x= color, fill = clarity)) 
+)
+```
+
+### Tabela
+
+```{r}
+renderTable(
+  filter(dados,cut == input$coluna) %>%
+  group_by(color) %>%
+  summarize(
+    media_preço = mean(price), 
+            mediana_preco = median(price)
+    ) 
+)
+```
+

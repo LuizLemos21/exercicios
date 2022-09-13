@@ -1,0 +1,65 @@
+---
+title: "Trabalho 03 - LUIZ FERNANDO SILVA LEMOS"
+output: html_notebook
+---
+1. instale a biblioteca sidrar
+
+```{r}
+install.packages("sidrar")
+```
+
+
+2. carregue sidrar e tidyverse
+
+```{r}
+library(tidyverse)
+library(sidrar)
+```
+
+
+3. use a função get_sidra e coloque a api = '/t/1737/n1/all/v/2266/p/all/d/v2266%2013'
+
+```{r}
+tabela = get_sidra(api = '/t/1737/n1/all/v/2266/p/all/d/v2266%2013')
+tabela
+```
+
+
+
+Pronto, agora vc já tem o número índice do IPCA desde dezembro de 1979;
+
+
+4. Use mutate(data = parse_date(`Mês (Código)`, format="%Y%m"))
+para criar a coluna “data” a partir do código do mês;
+
+```{r}
+tabela2 = tabela %>% mutate(data = parse_date(`Mês (Código)`, format="%Y%m"))
+tabela2
+```
+
+
+5. renomeie a coluna Valor para índice;
+
+```{r}
+tabela3 = tabela2 %>% rename(índice =Valor)
+tabela3
+```
+
+
+6. Selecione a coluna data, índice e filtre a data para depois de 2000-01-01, ou para qualquer outro parâmetro que deseje;
+
+```{r}
+tabela4 = tabela3  %>% select(data, índice) %>% filter(data > as.Date("2000-01-01"))
+tabela4
+```
+
+
+
+7. use o ggplot + geom_line() para plotar o gráfico dos dados que você filtrou
+
+```{r}
+ggplot(data = tabela4, aes(x=data, y=índice)) + geom_line()
+
+
+```
+

@@ -1,0 +1,57 @@
+---
+title: "Trabalho 02 - Manipulação de Tabelas - LUIZ FERNANDO SILBA LEMOS"
+output: html_notebook
+---
+
+1. Com o pacote rbcb, baixe as cotações do PIB, as últimas 60. 
+```{r}
+
+library(rbcb)
+
+pib = rbcb::get_series(c(PIB = 4380), last = 60, )
+pib
+```
+
+2. baixe as cotações do IPCA, os últimos 60 meses. (pode ser os códigos 4382 e 433, se quiserem)
+
+```{r}
+ipca = rbcb::get_series(c(IPCA = 4382), last = 60, )
+ipca
+```
+
+
+3. Usando o left_join, una as cotações numa única tabela pela data (caso tenha algum valor NA, pode dar um %>% na.omit);
+
+```{r}
+tabela = left_join(pib, ipca, by = 'date')
+tabela
+```
+
+
+4.Selecione somente as sequencias do PIB e IPCA;
+```{r}
+library(tidyr)
+
+tabela2 = tabela %>% 
+  select(PIB,IPCA)
+tabela2
+```
+
+5. use o gather e monte a tabela no formato long;
+```{r}
+tabela3 = tabela2 %>% gather(Medida, Valor)
+tabela3
+```
+
+
+6. use o group_by e summarize e determine em cada medida a média, mediana, desvio padrão e o número de observações;
+
+```{r}
+tabelaf = tabela3 %>%  gather(Medida, Valor) %>%
+  group_by(Medida) %>%
+  summarise(Media = mean(Valor),
+            DesvioPadrão = sd(Valor),
+            Mediana = median(Valor),
+            observacoes = n())
+tabelaf
+```
