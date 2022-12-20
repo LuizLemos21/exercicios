@@ -1,0 +1,39 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Tarefa 01 - Luiz Fernando Silva Lemos
+
+1. abra a base de dados que já está incluída no R chamada diamonds, que é um quadro de dados com 53.940 linhas e 10 variáveis:
+
+```{r}
+diamonds
+
+```
+
+2. Use o ggplot + geom_point para plotar um gráfico comparando o preço com os quilates;
+
+```{r}
+ggplot(data = diamonds) + geom_point(mapping = aes(x=carat, y = price)) 
+```
+
+3.Utilize a separação de cores relacionando os cortes;
+
+```{r}
+ggplot(data = diamonds) + geom_point(mapping = aes(x=carat, y = price, color= cut)) 
+
+```
+4.Utilize a separação de cores relacionando a claridade;
+
+```{r}
+ggplot(data = diamonds) + geom_point(mapping = aes(x=carat, y = price, color= clarity)) 
+```
+5. Utilize ggplot + geom_bar + facet_wrap para relacionar cor, claridade e corte
+
+```{r}
+ggplot(data = diamonds) +
+  geom_bar(mapping = aes(x= cut, fill = clarity)) + 
+  facet_wrap(~color)
+```
+

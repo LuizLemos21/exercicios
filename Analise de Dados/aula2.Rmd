@@ -1,0 +1,189 @@
+---
+title: "Aula 02 "
+output: html_notebook
+---
+########################
+Tipos de variáveis
+#######################
+
+Numérico, Inteiro, Caractere, Fator e Lógico
+
+```{r}
+#Numerico
+num = 1.8
+print(num)
+class(num)
+
+int = as.integer(1.8)
+print(int)
+class(int)
+
+
+#Caracteres
+carac1 = "Matemática"
+print(carac1)
+class(carac1)
+
+carac2 = "1.8 Metros"
+print(carac2)
+class(carac2)
+
+#Fator: relações qualitativas 
+fator1 = factor(c("longo","curto","fino","grosso","leve","pesado"))
+print(fator1)
+class(fator1)
+
+#lógico
+tipo_true = TRUE
+print(tipo_true)
+class(tipo_true)
+
+tipo_false = FALSE
+print(tipo_false)
+class(tipo_false)
+
+
+
+```
+##########################
+Objetos: Vetores!!!!!!
+##########################
+
+```{r}
+valor.num = c(3,4,5,6,20)
+valor.num
+
+valor.car = c("Newton","Gil","Cristiano")
+valor.car
+
+valor.logico = c(FALSE,FALSE,TRUE,TRUE)
+valor.logico
+
+
+#Vetor usando a função rep 
+rep(1:5)            # todos os valores de 1 a 5
+rep(1,5)            # repete o 1 cinco vezes
+rep(c(1,3),4)       # repete o vetor 1,3 4 vezes
+rep(c(1,3),c(3,5))  # repete 1 tres vezes e repete o 3 cinco vezes
+
+
+# usando a função seq
+seq(from=1, to=6)            #1,2,3,4,5,6
+seq(from=1, to=6, by=2)      #1,3,5
+seq(from=1, to=6, by=0.5)   # 1.0 1.5 2.0 2.5 3.0 3.5 4.0 4.5 5.0 5.5 6.0
+seq(from=1, to=6, length=10)  #P.A de 10 termos com A1 = 1 e An = 6
+
+
+#Outros
+1:5   #1 2 3 4 5
+u = c(13:5,99)
+u
+length(u)
+
+```
+###########################
+Operações com vetores
+###########################
+
+```{r}
+y = 5:8       #5,6,7,8
+x = 1:4       #1,2,3,4
+
+x+y           #6  8 10 12
+2*x+1         #3 5 7 9
+x*y
+x/y
+log(x)    #log natural, base e
+log(x,10) #log base 2
+sum(x)       #soma dos termos
+mean(x)       #media dos termos
+prod(x)       #produto dos termos
+var(x)        #variancia
+sd(x)         #desvio padrao
+sqrt(var(x))  #desvio padrao
+
+```
+#######################
+Matrizes
+######################
+
+```{r}
+mat.num = matrix((1:16),4,4)
+mat.num   # matriz preenchida por colunas
+mat.num = matrix((1:16),4,4,byrow = TRUE)
+mat.num   # matriz preenchida por linhas
+```
+######################
+Data Frames - matrizes com tipos de dados diferentes
+######################
+
+```{r}
+
+data(iris)
+iris
+head(iris,5) # mostra os primeiros 5 dados
+dim(iris) #lnum de inhas, num de colunas
+tail(iris,5) # mostra os ultimos 5 dados
+
+iris$Petal.Length  # mostrando apenas uma coluna especifica
+
+```
+############
+Lista - Vetor generalizado de objetos
+###########
+
+```{r}
+
+A = list(x=1:4, y = matrix(1:4,2,2), v=list(C=4,B=5))
+A
+```
+#################################
+OPERANDO VETORES
+################################
+
+```{r}
+
+x = c(10.4,5.6,3.1,6.4,21.7)
+
+#OBS 
+y = assign("x",c(10.4,5.6,3.1,6.4,21.7)) #mesma coisa!
+
+z = c(x,NA,x,NA,x)
+z = c(1,3,NA,4,5,6,NA,7)
+
+length(z)
+z
+
+z = z[-(1:3)] # RETIRA ELEMENTOS DE 1 A 3 NO VETOR
+z2 = c(1,NULL,5)
+z2
+```
+
+############
+PIPE %>%
+###########
+```{r}
+install.packages("magrittr")
+library(magrittr)
+x = 1:10
+x
+mean(x)
+x %>% mean
+
+media = x %>% mean
+media
+```
+
+```{r}
+z = c(1,2,NA,8,3,NA,3)
+sum(is.na(z))     
+z
+sum(z)
+z = z %>% na.omit()  # tira os NAs de z
+sum(z)
+
+```
+
+
+
+
