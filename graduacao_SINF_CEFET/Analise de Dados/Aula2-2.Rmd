@@ -1,0 +1,104 @@
+---
+title: "R Aula 2 parte 2"
+output: pdf
+---
+Questoes com Fata Frames
+
+```{r}
+rm(list = ls())
+
+x = 10:1
+
+y = -4:5
+
+q = c("Hockey","Lacrosse","Football","Baseball","Curling","Rugby","Basketball","Tennis","Soccer","Cricket")
+
+theDF = data.frame(x,y,q) #TODOS OS VETORES PRECISAM SER DO MESMO TAMANHO
+
+theDF
+#pode haver rótulos nas colunas
+theDF = data.frame(Primeiro=x,Segundo=y,Sport=q)
+
+```
+```{r}
+nrow(theDF) #NUMERO DE LINHAS
+ncol(theDF) #NUMERO DE COLUNAS
+
+dim(theDF)  #Dimensões do DF
+names(theDF) #Nomes das colunas
+names(theDF)[3] #nome da coluna 3
+#Nomeando linhas
+rownames(theDF) = c("um","dois","tres","quatro","cinco","seis","sete","oito","nove","dez")
+theDF
+
+#RETIRAR RNOMES DAS LINHAS
+rownames(theDF) = NULL
+theDF
+
+```
+```{r}
+head(theDF)         #pega automaticamente o primeiro 6 linhas
+
+tail(theDF, n=3)
+theDF[3,2]           #linha 3, coluna 2
+theDF[3,2:3]        #linha 3, coluna 2 e 3
+theDF[c(3,5),2:3]   #linhas 3 e 5, colunas 2 a 3
+theDF[2,]           # linha 2
+```
+Criando Listas
+```{r}
+
+#listas podem ter qualquer coisa como items, como vetores, matrizes, dataframes e até mesmo outras listas
+
+
+l1 = list(1,2,3)
+l1
+
+l2 = list(c(1,2,3))
+l2
+
+l3 = list(c(1,2,3),3:7)
+l3
+
+l4 = list(theDF,1:10)
+l4
+
+l5 = list(theDF,1:10,l3)
+l5
+
+#colocar nomes nos itens lista
+names(l5) = c("data.frame","vetor","lista")
+names(l5)
+```
+
+```{r}
+#declarando uma lista já com os nomes
+l6= list(TheDataFrame=theDF, TheVector=1:10, TheList=l3)
+names(l6)
+l6
+```
+Acessar Elementos da Lista
+```{r}
+l6$TheDataFrame
+l6$TheDataFrame[[3]] #3a coluna do data frame
+l6$TheDataFrame[[3]][3]
+l6$TheDataFrame[3,3]
+
+l6[2]
+l6$TheVector
+
+l6[3]
+l6$TheList
+l6$TheList[1] #primeiro elemento de TheList
+l6$TheList[2]
+
+l6[[3]][1] #primeiro elemento de TheList
+l6[[3]][1][[1]][2]  #segundo elemento da Lista de TheList
+
+
+```
+```{r}
+l6[["NovoObjeto"]] = 3:10
+l6
+```
+
