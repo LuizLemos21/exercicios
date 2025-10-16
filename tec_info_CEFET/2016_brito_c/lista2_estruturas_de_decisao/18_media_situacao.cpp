@@ -1,0 +1,1 @@
+//Faça um programa que leia nome, nota1 e nota2 de um aluno, em seguida calcule a média e informe se ele está aprovado, reprovado, ou em pf (média maior ou igual a 8.5 = aprovado; média menor ou igual a 5 = reprovado; senão: prova final.)

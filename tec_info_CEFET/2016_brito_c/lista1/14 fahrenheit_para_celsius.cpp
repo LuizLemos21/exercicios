@@ -9,6 +9,4 @@ int main(){
     
     printf("a temperatura equivalente em celsius eh %.2f", celsius);
 
-
-
 }

@@ -9,6 +9,4 @@ int main(){
     
     printf("a temperatura equivalente em fahrenheit eh %.2f", fahrenheit);
 
-
-
 }

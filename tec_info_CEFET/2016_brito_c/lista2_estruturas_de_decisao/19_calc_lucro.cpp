@@ -1,0 +1,1 @@
+//Um comerciante compra um produto e quer vendê-lo com um lucro de 45%, se o valor for menor de que R$20.00, caso contrário, o lucro será de 30%. Entre com o valor do produto e imprima o seu valor de venda.
