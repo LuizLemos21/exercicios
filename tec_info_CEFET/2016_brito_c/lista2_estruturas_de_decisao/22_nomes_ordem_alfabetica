@@ -1,0 +1,17 @@
+#include <stdio.h>
+#include <string.h>
+
+char n1[50], n2[50], n3[50];
+
+int main(){
+    printf("Entre com o nome 1: ");
+    scanf("%s", &n1);
+    printf("Entre com o nome 2: ");
+    scanf("%s", &n2);
+    printf("Entre com o nome 3: ");
+    scanf("%s", &n3);
+
+    if ((strcmp(n1,n2) < 0) && (strcmp(n1,n3) < 0) && (strcmp(n2,n3) < 0)){
+        printf("%s \t %s \t %s ");
+    }
+}
